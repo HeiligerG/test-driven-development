@@ -23,7 +23,7 @@ describe( "play Rock, Paper, Scissor", () => {
       });
     
       test("throws an invalid input", () => {
-        expect(() => play("lizard", "rock")).toThrow("Invalid move: lizard");
-        expect(() => play("rock", "spock")).toThrow("Invalid move: spock");
+        expect(() => play("lizard", "rock")).toThrow("Invalid move: lizard"); // im moment noch vlt. werde ich dies erweitern
+        expect(() => play("rock", "spock")).toThrow("Invalid move: spock"); // im moment noch vlt. werde ich dies erweitern
       });
 });
