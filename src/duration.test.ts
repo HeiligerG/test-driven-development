@@ -23,7 +23,7 @@ describe("formatDuration", () => {
       });
     
       test("throws error for negative input", () => {
-        expect(() => formatDuration(-10)).toThrow("Duration must be non-negative");
+        expect(() => formatDuration(-10)).toThrow("Duration must be positive");
       });
     
       test("rounds float seconds correct", () => {
