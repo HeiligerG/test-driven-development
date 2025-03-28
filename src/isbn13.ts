@@ -10,5 +10,3 @@ export function isValid(isbn: string): boolean {
 
   return sum % 10 === 0;
 }
-
-// trow-exeption müsste vlt. noch implementiert werden
