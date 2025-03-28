@@ -1,26 +1,19 @@
 import { calcPoints, possibleCheckout } from "./darts";
 
-describe("calculate points", () => {
-    test("add points if", () => {
-        expect(calcPoints).toBeLessThan(501);
-    });
-    test("dont add points if", () => {
-        expect(calcPoints).toBeGreaterThanOrEqual(501);
-    });
-    test("dont add points if negative", () => {
-        expect(calcPoints).toBe(-200);
+describe("calculate correct hits", () => {
+    test("correct hit if calculated correct", () => {
+        expect(calcPoints("3 20 1 17 2 4")).toBe(81);
+        expect(calcPoints("2 15 1 18 3 19")).toBe(105);
+        expect(calcPoints("3 20 1 5")).toBe(65);
     });
 });
-describe("check for possible checkout", () => {
-    test("is a checkout if equal to 501", () => {
-        expect(possibleCheckout).toBe(501)
+describe("check a possible checkout", () => {
+    test("checkout if double out possible", () => {
+        expect(possibleCheckout(477)).toBe("Double 12")
+        expect(possibleCheckout(451)).toBe("Double 25");
     });
-    test("is not a checkout if less then 501", () => {
-        expect(possibleCheckout).toBe(500);
-        expect(possibleCheckout).toBe(400);
-        expect(possibleCheckout).toBe(20);
-    });
-    test("is not a checkout if grater then 501", () => {
-        expect(possibleCheckout).toBe(502)
+    test("no checkout if no double out possible", () => {
+        expect(possibleCheckout(480)).toBe("No Checkout");
+        expect(possibleCheckout(441)).toBe("No Checkout");
     });
 });
