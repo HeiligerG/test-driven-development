@@ -1,0 +1,219 @@
+# TypeScript RegEx Cheat Sheet
+
+## RegEx-Erstellung
+
+```typescript
+// Literal-Notation
+const pattern1 = /abc/;
+
+// Konstruktor-Notation
+const pattern2 = new RegExp('abc');
+
+// Mit Flags
+const patternWithFlags = /abc/gi;
+
+// Mit Escape-Zeichen (doppelt escapen im Konstruktor)
+const escapePattern1 = /\d+/;
+const escapePattern2 = new RegExp('\\d+');
+```
+
+## Flags
+
+| Flag | Beschreibung                                         |
+|------|-----------------------------------------------------|
+| `g`  | **G**lobal - alle Übereinstimmungen finden         |
+| `i`  | Case-**I**nsensitive - Groß-/Kleinschreibung ignorieren |
+| `m`  | **M**ultiline - ^ und $ passen auf Zeilenanfang/-ende |
+| `s`  | **S**ingle line/dotAll - . passt auch auf Newlines |
+| `u`  | **U**nicode - aktiviert Unicode-Features            |
+| `y`  | Stick**y** - Sucht nur ab lastIndex Position        |
+
+## Musterelemente
+
+| Element     | Beschreibung                          | Beispiel                 |
+|-------------|--------------------------------------|--------------------------|
+| `.`         | Beliebiges Zeichen (außer \n)        | `/h.t/` → "hat", "hit"   |
+| `^`         | Anfang der Eingabe/Zeile             | `/^T/` → "Test" (am Anfang) |
+| `$`         | Ende der Eingabe/Zeile               | `/t$/` → "test" (am Ende)  |
+| `\|`        | Alternation (ODER)                   | `/cat\|dog/` → "cat", "dog" |
+| `()`        | Gruppierung und Erfassung            | `/(ab)+/` → "ab", "abab"    |
+| `(?:)`      | Nicht-erfassende Gruppe              | `/(?:ab)+/` → wie oben, ohne zu erfassen |
+| `[]`        | Zeichenklasse                        | `/[abc]/` → "a", "b", "c"  |
+| `[^]`       | Negierte Zeichenklasse               | `/[^abc]/` → alles außer "a", "b", "c" |
+| `\`         | Escape-Zeichen                       | `/\./` → "." (literaler Punkt) |
+
+## Zeichenklassen
+
+| Kurzform | Äquivalent   | Bedeutung                        |
+|----------|--------------|----------------------------------|
+| `\d`     | `[0-9]`      | Ziffer                           |
+| `\D`     | `[^0-9]`     | Keine Ziffer                     |
+| `\w`     | `[A-Za-z0-9_]` | Wortzeichen                      |
+| `\W`     | `[^A-Za-z0-9_]` | Kein Wortzeichen                 |
+| `\s`     | `[ \t\n\r\f]` | Whitespace                       |
+| `\S`     | `[^ \t\n\r\f]` | Kein Whitespace                  |
+| `\b`     | -            | Wortgrenze                       |
+| `\B`     | -            | Keine Wortgrenze                 |
+
+## Quantifizierer
+
+| Syntax      | Beschreibung                          | Beispiel              |
+|-------------|--------------------------------------|------------------------|
+| `*`         | 0 oder mehr                          | `/ab*/` → "a", "ab", "abbb" |
+| `+`         | 1 oder mehr                          | `/ab+/` → "ab", "abbb" (nicht "a") |
+| `?`         | 0 oder 1                             | `/ab?/` → "a", "ab" |
+| `{n}`       | Genau n Mal                          | `/a{3}/` → "aaa" |
+| `{n,}`      | Mindestens n Mal                     | `/a{2,}/` → "aa", "aaa", ... |
+| `{n,m}`     | Zwischen n und m Mal                 | `/a{1,3}/` → "a", "aa", "aaa" |
+| `*?`, `+?`, `??`, `{n,}?`, `{n,m}?` | Nicht-gierige Version | `/a.+?b/` → kleinster Match zwischen a und b |
+
+## Lookaround
+
+| Syntax      | Name                | Bedeutung                      |
+|-------------|--------------------|---------------------------------|
+| `(?=...)`   | Positiver Lookahead | Prüft, ob Muster folgt         |
+| `(?!...)`   | Negativer Lookahead | Prüft, ob Muster nicht folgt   |
+| `(?<=...)`  | Positiver Lookbehind | Prüft, ob Muster vorausgeht    |
+| `(?<!...)`  | Negativer Lookbehind | Prüft, ob Muster nicht vorausgeht |
+
+## Erfassungsgruppen
+
+```typescript
+// Einfache Gruppen
+const datePattern = /(\d{2})-(\d{2})-(\d{4})/;
+const match = "25-12-2023".match(datePattern);
+// match[0] = "25-12-2023", match[1] = "25", match[2] = "12", match[3] = "2023"
+
+// Benannte Gruppen
+const namedPattern = /(?<day>\d{2})-(?<month>\d{2})-(?<year>\d{4})/;
+const namedMatch = "25-12-2023".match(namedPattern);
+// namedMatch.groups.day = "25", namedMatch.groups.month = "12", namedMatch.groups.year = "2023"
+```
+
+## RegEx-Methoden
+
+### RegExp-Methoden
+
+```typescript
+const regex = /pattern/g;
+
+// Prüft, ob ein Muster im String vorkommt
+regex.test("string"); // true oder false
+
+// Führt die Suche aus und gibt detaillierte Informationen zurück
+regex.exec("string"); // Match-Objekt oder null
+```
+
+### String-Methoden mit RegEx
+
+```typescript
+const str = "example string";
+
+// Prüft, ob ein Muster vorkommt
+str.search(/pattern/); // Index des ersten Treffers oder -1
+
+// Findet alle Übereinstimmungen
+str.match(/pattern/g); // Array mit allen Treffern oder null
+
+// Gibt Iterator mit allen Matches zurück (ES2020+)
+str.matchAll(/pattern/g); // Iterator mit Match-Objekten
+
+// Ersetzt Übereinstimmungen
+str.replace(/pattern/, "replacement"); // Ersetzt ersten Treffer
+str.replaceAll(/pattern/g, "replacement"); // Ersetzt alle Treffer (g-Flag nötig)
+
+// Teilt String an Übereinstimmungen
+str.split(/separator/); // Array von Teilstrings
+```
+
+## Häufige Muster
+
+### E-Mail
+```typescript
+/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+```
+
+### URL
+```typescript
+/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
+```
+
+### Datum (DD.MM.YYYY)
+```typescript
+/^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.\d{4}$/
+```
+
+### Starkes Passwort
+```typescript
+/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/
+```
+
+### IPv4-Adresse
+```typescript
+/^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
+```
+
+## TypeScript-Integration
+
+### Typisierte RegEx-Funktionen
+
+```typescript
+interface MatchGroups {
+  firstName: string;
+  lastName: string;
+}
+
+function extractName(text: string): MatchGroups | null {
+  const pattern = /(?<firstName>\w+)\s+(?<lastName>\w+)/;
+  const match = text.match(pattern);
+  
+  return match?.groups as MatchGroups | null;
+}
+```
+
+### Generische RegEx-Verarbeitung
+
+```typescript
+function matchAllGroups<T>(text: string, pattern: RegExp): T[] {
+  if (!pattern.global) {
+    pattern = new RegExp(pattern, pattern.flags + 'g');
+  }
+  
+  const matches: T[] = [];
+  let match;
+  
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.groups) {
+      matches.push(match.groups as T);
+    }
+  }
+  
+  return matches;
+}
+```
+
+## Best Practices
+
+### Performance
+- Vorkompiliere RegEx-Objekte außerhalb von Schleifen
+- Vermeide verschachtelte Quantifizierer (`(a+)+`)
+- Nutze Anker (`^`, `$`) um unnötige Suchen zu vermeiden
+- Verwende spezifischere Muster statt `.+`
+
+### Wartbarkeit
+- Schreibe komplexe RegEx mit der `x`-Flag (ES2024+) für bessere Lesbarkeit
+- Teile komplexe Muster in kleinere, wiederverwendbare Komponenten
+- Dokumentiere komplexe RegEx mit Kommentaren
+- Verwende benannte Gruppen für bessere Verständlichkeit
+
+### Fehlerbehandlung
+- Validiere Benutzereingaben vor der RegEx-Anwendung
+- Handle `null`-Rückgabewerte von `match()` und `exec()`
+- Setze Timeout-Mechanismen für potentiell langsame RegEx
+
+## Debugging
+
+- Teste RegEx mit online tools (regex101.com)
+- Nutze `console.log()` mit `match()` oder `exec()` für detaillierte Debugging-Informationen
+- Entwickle komplexe Muster schrittweise
+- Setze Breakpoints in deiner IDE für RegEx-Methoden
